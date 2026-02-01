@@ -35,10 +35,8 @@ struct ArtAppsWebViewWrapper: UIViewRepresentable {
         }
         
         func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction) async -> WKNavigationActionPolicy {
-            if navigationAction.navigationType == .linkActivated {
-                if let url = navigationAction.request.url {
-                    await UIApplication.shared.open(url)
-                }
+            if navigationAction.targetFrame == nil {
+                webView.load(navigationAction.request)
                 return .cancel
             }
             return .allow
