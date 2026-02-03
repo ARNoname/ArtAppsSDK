@@ -60,7 +60,7 @@ class ArtAppsNetworkManager {
         }
     }
     
-    func trackImpression(requestId: String, trackUrl: String?) {
+    func trackImpression(requestId: String, trackUrl: String?, visible: Int) {
         let urlTarget: URL?
         
         if let trackUrlString = trackUrl, let url = URL(string: trackUrlString) {
@@ -68,10 +68,13 @@ class ArtAppsNetworkManager {
         } else {
             // Fallback manual construction if trackUrl is missing
             let trackingURLString = "https://api.adw.net/applovin/track"
+            
             guard var components = URLComponents(string: trackingURLString) else { return }
+            
             components.queryItems = [
                 URLQueryItem(name: "request_id", value: requestId),
-                URLQueryItem(name: "event", value: "impression")
+                URLQueryItem(name: "event", value: "impression"),
+                URLQueryItem(name: "was_visible", value: String(visible))
             ]
             urlTarget = components.url
         }

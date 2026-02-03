@@ -116,16 +116,26 @@ extension ArtAppsInterstitial: ArtAppsWebViewControllerDelegate {
         ArtApps.shared.didShowAd() // Record impression timestamp for freq cap
         delegate?.artAppsInterstitialDidDisplay(self)
         
-        // Tracking impression logic: send to your server
-        if let requestId = adResponse?.requestId {
-            ArtAppsNetworkManager.shared.trackImpression(requestId: requestId, trackUrl: adResponse?.trackUrl)
-        }
+//        // Tracking impression logic: send to your server
+//        if let requestId = adResponse?.requestId {
+//            ArtAppsNetworkManager.shared.trackImpression(requestId: requestId, trackUrl: adResponse?.trackUrl)
+//        }
     }
     
     func webViewControllerDidFinish(_ controller: ArtAppsWebViewController) {
         if let startTime = adDisplayStartTime {
             let duration = Date().timeIntervalSince(startTime)
             print("[ArtApps] Ad was visible for \(Int(duration)) seconds")
+            
+            // Tracking impression logic: send to your server
+                 if let requestId = adResponse?.requestId {
+                     ArtAppsNetworkManager.shared
+                         .trackImpression(
+                            requestId: requestId,
+                            trackUrl: adResponse?.trackUrl,
+                            visible: Int(duration)
+                         )
+                 }
         }
         
         delegate?.artAppsInterstitialDidHide(self)
