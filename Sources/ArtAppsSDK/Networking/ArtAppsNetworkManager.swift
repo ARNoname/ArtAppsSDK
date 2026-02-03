@@ -63,8 +63,13 @@ class ArtAppsNetworkManager {
     func trackImpression(requestId: String, trackUrl: String?, visible: Int) {
         let urlTarget: URL?
         
-        if let trackUrlString = trackUrl, let url = URL(string: trackUrlString) {
-            urlTarget = url
+        if let trackUrlString = trackUrl, var components = URLComponents(string: trackUrlString) {
+            var queryItems = components.queryItems ?? []
+            // Remove existing was_visible if present to avoid duplication
+            queryItems.removeAll { $0.name == "was_visible" }
+            queryItems.append(URLQueryItem(name: "was_visible", value: String(visible)))
+            components.queryItems = queryItems
+            urlTarget = components.url
         } else {
             // Fallback manual construction if trackUrl is missing
             let trackingURLString = "https://api.adw.net/applovin/track"
